@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>آزمون انواع انرژی</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Tahoma, Vazir, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    direction: rtl;
+  }
+  .container {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    padding: 30px;
+    max-width: 750px;
+    width: 100%;
+  }
+  h1 { text-align: center; color: #4a3f8f; margin-bottom: 20px; font-size: 1.6rem; }
+  h2 { color: #4a3f8f; margin-bottom: 15px; font-size: 1.2rem; }
+  input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 1rem;
+  }
+  input:focus { outline: none; border-color: #667eea; }
+  button {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    cursor: pointer;
+    margin: 8px 5px;
+    transition: transform 0.2s;
+  }
+  button:hover { transform: translateY(-2px); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-secondary { background: #888; }
+  .hidden { display: none; }
+
+  .progress-bar {
+    background: #eee;
+    border-radius: 10px;
+    height: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s;
+  }
+  .question-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px;
+  }
+  .example-box {
+    background: #fff8e1;
+    border-right: 4px solid #ffb300;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    color: #5d4037;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+  .example-box strong { color: #e65100; }
+  .options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+  .option {
+    background: #f5f5f5;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1rem;
+    text-align: right;
+  }
+  .option:hover { background: #e8eaf6; border-color: #667eea; }
+  .option.selected { background: #c5cae9; border-color: #3f51b5; }
+  .option.correct { background: #c8e6c9; border-color: #4caf50; }
+  .option.wrong { background: #ffcdd2; border-color: #f44336; }
+  .option.disabled { pointer-events: none; }
+
+  .result-box {
+    text-align: center;
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+    font-size: 1.1rem;
+  }
+  .result-box.good { background: #e8f5e9; color: #2e7d32; }
+  .result-box.bad { background: #ffebee; color: #c62828; }
+
+  .final-score {
+    text-align: center;
+    font-size: 1.3rem;
+    color: #4a3f8f;
+    padding: 25px;
+    background: #f3f0ff;
+    border-radius: 15px;
+    line-height: 2;
+  }
+  .final-score .big { font-size: 3rem; font-weight: bold; color: #667eea; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 0.9rem;
+  }
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+  }
+  th { background: #f3f0ff; color: #4a3f8f; }
+
+  .admin-section { margin-top: 20px; text-align: center; }
+  .admin-section a {
+    color: #667eea;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 0.85rem;
+  }
+  .center { text-align: center; }
+  .section-badge {
+    display: inline-block;
+    background: #667eea;
+    color: #fff;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- صفحه شروع -->
+  <div id="startScreen">
+    <h1>⚡ آزمون انواع انرژی ⚡</h1>
+    <p class="center" style="color:#666; margin-bottom:20px;">
+      این آزمون شامل ۳۰ سوال چهارگزینه‌ای در مورد انواع انرژی است.
+    </p>
+    <input type="text" id="studentName" placeholder="نام و نام خانوادگی خود را وارد کنید">
+    <input type="text" id="studentClass" placeholder="کلاس (مثلاً ششم ب)">
+    <div class="center">
+      <button onclick="startQuiz()">شروع آزمون 🚀</button>
+    </div>
+    <div class="admin-section">
+      <a onclick="showAdmin()">مشاهده اسامی شرکت‌کنندگان</a>
+    </div>
+  </div>
+
+  <!-- صفحه آزمون -->
+  <div id="quizScreen" class="hidden">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="question-info">
+      <span id="questionCounter">سوال ۱ از ۳۰</span>
+      <span id="studentDisplay"></span>
+    </div>
+    <div id="exampleBox" class="example-box"></div>
+    <h2 id="questionText"></h2>
+    <div class="options" id="optionsContainer"></div>
+    <div class="center" style="margin-top:20px;">
+      <button id="nextBtn" onclick="nextQuestion()" disabled>سوال بعدی ➡️</button>
+    </div>
+    <div id="feedback" class="result-box hidden"></div>
+  </div>
+
+  <!-- صفحه نتیجه -->
+  <div id="resultScreen" class="hidden">
+    <h1>🎉 آزمون تمام شد 🎉</h1>
+    <div class="final-score">
+      <div id="finalStudentName"></div>
+      <div class="big" id="finalScore">0</div>
+      <div>امتیاز از ۳۰</div>
+      <div id="finalPercent" style="font-size:1rem; color:#666;"></div>
+    </div>
+    <div class="center" style="margin-top:20px;">
+      <button onclick="restart()">آزمون مجدد 🔄</button>
+    </div>
+    <div class="admin-section">
+      <a onclick="showAdmin()">مشاهده اسامی شرکت‌کنندگان</a>
+    </div>
+  </div>
+
+  <!-- صفحه ادمین -->
+  <div id="adminScreen" class="hidden">
+    <h1>📋 لیست شرکت‌کنندگان</h1>
+    <div id="adminList"></div>
+    <div class="center" style="margin-top:20px;">
+      <button class="btn-secondary" onclick="backToStart()">بازگشت</button>
+      <button class="btn-secondary" onclick="clearRecords()">پاک کردن همه</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ================== سوالات ================== */
+const questions = [
+  // ---- انرژی حرکتی ----
+  {
+    section: "انرژی حرکتی",
+    example: "🔹 <strong>مثال:</strong> دوچرخه‌ای که در حال حرکت است، انرژی حرکتی دارد.",
+    q: "انرژی حرکتی مربوط به کدام مورد است؟",
+    options: ["جسم در حال حرکت", "جسم ساکن روی زمین", "نور خورشید", "گرمای آتش"],
+    answer: 0
+  },
+  {
+    section: "انرژی حرکتی",
+    example: "🔹 <strong>مثال:</strong> توپی که در هوا پرتاب شده، انرژی حرکتی دارد.",
+    q: "کدام جسم انرژی حرکتی بیشتری دارد؟",
+    options: ["توپ ساکن روی زمین", "توپی که به سرعت در حال حرکت است", "کتاب روی میز", "صندلی"],
+    answer: 1
+  },
+  {
+    section: "انرژی حرکتی",
+    example: "🔹 <strong>مثال:</strong> باد، هوای در حال حرکت است و انرژی حرکتی دارد.",
+    q: "باد چه نوع انرژی دارد؟",
+    options: ["نورانی", "صوتی", "حرکتی", "شیمیایی"],
+    answer: 2
+  },
+  {
+    section: "انرژی حرکتی",
+    example: "🔹 <strong>مثال:</strong> آسیاب بادی با انرژی حرکتی باد می‌چرخد.",
+    q: "آسیاب بادی با کدام انرژی می‌چرخد؟",
+    options: ["نورانی", "حرکتی باد", "گرمایی", "صوتی"],
+    answer: 1
+  },
+  {
+    section: "انرژی حرکتی",
+    example: "🔹 <strong>مثال:</strong> آب در حال ریزش از بلندی، انرژی حرکتی دارد.",
+    q: "آب در حال ریزش از آبشار چه انرژی دارد؟",
+    options: ["صوتی", "نورانی", "حرکتی", "هسته‌ای"],
+    answer: 2
+  },
+  {
+    section: "انرژی حرکتی",
+    example: "🔹 <strong>مثال:</strong> ماشینی که در جاده حرکت می‌کند، انرژی حرکتی دارد.",
+    q: "کدام یک انرژی حرکتی دارد؟",
+    options: ["ماشین پارک‌شده", "ماشین در حال حرکت", "چراغ خاموش", "یخ در فریزر"],
+    answer: 1
+  },
+  {
+    section: "انرژی حرکتی",
+    example: "🔹 <strong>مثال:</strong> پره‌های پنکه در حال چرخش، انرژی حرکتی دارند.",
+    q: "پنکه در حال کار چه انرژی تولید می‌کند؟",
+    options: ["فقط صوتی", "فقط نورانی", "حرکتی و صوتی", "فقط گرمایی"],
+    answer: 2
+  },
+  {
+    section: "انرژی حرکتی",
+    example: "🔹 <strong>مثال:</strong> هرچه سرعت جسم بیشتر باشد، انرژی حرکتی آن بیشتر است.",
+    q: "انرژی حرکتی به کدام عامل بستگی دارد؟",
+    options: ["رنگ جسم", "سرعت و جرم جسم", "شکل جسم", "دمای محیط"],
+    answer: 1
+  },
+
+  // ---- انرژی صوتی ----
+  {
+    section: "انرژی صوتی",
+    example: "🔹 <strong>مثال:</strong> صدای بلندگوی در حال پخش، انرژی صوتی دارد.",
+    q: "انرژی صوتی از کجا تولید می‌شود؟",
+    options: ["از اجسام ساکن", "از ارتعاش اجسام", "از نور", "از سرما"],
+    answer: 1
+  },
+  {
+    section: "انرژی صوتی",
+    example: "🔹 <strong>مثال:</strong> تارهای گیتار هنگام نواختن می‌لرزند و صدا تولید می‌کنند.",
+    q: "تارهای گیتار چگونه صدا تولید می‌کنند؟",
+    options: ["با گرم شدن", "با ارتعاش", "با سرد شدن", "با نور"],
+    answer: 1
+  },
+  {
+    section: "انرژی صوتی",
+    example: "🔹 <strong>مثال:</strong> طبل هنگام نواختن صدا می‌دهد.",
+    q: "صدای طبل چه نوع انرژی است؟",
+    options: ["نورانی", "گرمایی", "صوتی", "حرکتی"],
+    answer: 2
+  },
+  {
+    section: "انرژی صوتی",
+    example: "🔹 <strong>مثال:</strong> صدای زنگ مدرسه، انرژی صوتی است.",
+    q: "زنگ مدرسه چه نوع انرژی تولید می‌کند؟",
+    options: ["نورانی", "صوتی", "گرمایی", "شیمیایی"],
+    answer: 1
+  },
+  {
+    section: "انرژی صوتی",
+    example: "🔹 <strong>مثال:</strong> بلندگو انرژی الکتریکی را به صوتی تبدیل می‌کند.",
+    q: "بلندگو کدام تبدیل انرژی را انجام می‌دهد؟",
+    options: ["صوتی به نورانی", "الکتریکی به صوتی", "گرمایی به صوتی", "حرکتی به نورانی"],
+    answer: 1
+  },
+  {
+    section: "انرژی صوتی",
+    example: "🔹 <strong>مثال:</strong> صدای بلندتر انرژی صوتی بیشتری دارد.",
+    q: "کدام صدا انرژی صوتی بیشتری دارد؟",
+    options: ["نجوا", "صدای بلند", "سکوت", "زمزمه"],
+    answer: 1
+  },
+  {
+    section: "انرژی صوتی",
+    example: "🔹 <strong>مثال:</strong> تلفن همراه هنگام زنگ خوردن انرژی صوتی تولید می‌کند.",
+    q: "گوشی هنگام زنگ زدن چه انرژی تولید می‌کند؟",
+    options: ["فقط نورانی", "صوتی و نورانی", "فقط گرمایی", "فقط حرکتی"],
+    answer: 1
+  },
+  {
+    section: "انرژی صوتی",
+    example: "🔹 <strong>مثال:</strong> برای شنیدن صدا، جسم باید بلرزد.",
+    q: "شرط اصلی تولید صدا چیست؟",
+    options: ["گرما", "نور", "ارتعاش", "سرما"],
+    answer: 2
+  },
+
+  // ---- انرژی گرمایی ----
+  {
+    section: "انرژی گرمایی",
+    example: "🔹 <strong>مثال:</strong> شوفاژ گرمای خانه را تأمین می‌کند.",
+    q: "شوفاژ چه نوع انرژی تولید می‌کند؟",
+    options: ["صوتی", "نورانی", "گرمایی", "حرکتی"],
+    answer: 2
+  },
+  {
+    section: "انرژی گرمایی",
+    example: "🔹 <strong>مثال:</strong> خورشید منبع اصلی انرژی گرمایی زمین است.",
+    q: "منبع اصلی انرژی گرمایی زمین چیست؟",
+    options: ["ماه", "خورشید", "ستاره‌ها", "ابرها"],
+    answer: 1
+  },
+  {
+    section: "انرژی گرمایی",
+    example: "🔹 <strong>مثال:</strong> آب جوش انرژی گرمایی دارد.",
+    q: "آب جوش چه انرژی دارد؟",
+    options: ["صوتی", "گرمایی", "نورانی", "حرکتی"],
+    answer: 1
+  },
+  {
+    section: "انرژی گرمایی",
+    example: "🔹 <strong>مثال:</strong> بخاری انرژی گرمایی تولید می‌کند.",
+    q: "بخاری چه نوع انرژی تولید می‌کند؟",
+    options: ["نورانی", "صوتی", "گرمایی", "شیمیایی"],
+    answer: 2
+  },
+  {
+    section: "انرژی گرمایی",
+    example: "🔹 <strong>مثال:</strong> اتو برقی انرژی الکتریکی را به گرمایی تبدیل می‌کند.",
+    q: "اتو برقی کدام تبدیل انرژی را انجام می‌دهد؟",
+    options: ["گرمایی به نورانی", "الکتریکی به گرمایی", "صوتی به گرمایی", "حرکتی به گرمایی"],
+    answer: 1
+  },
+  {
+    section: "انرژی گرمایی",
+    example: "🔹 <strong>مثال:</strong> دمای بالاتر یعنی انرژی گرمایی بیشتر.",
+    q: "انرژی گرمایی با کدام کمیت اندازه‌گیری می‌شود؟",
+    options: ["سرعت", "دما", "وزن", "حجم"],
+    answer: 1
+  },
+  {
+    section: "انرژی گرمایی",
+    example: "🔹 <strong>مثال:</strong> بدن ما هم انرژی گرمایی تولید می‌کند.",
+    q: "کدام مورد انرژی گرمایی تولید می‌کند؟",
+    options: ["بدن انسان", "آینه", "کتاب", "دیوار"],
+    answer: 0
+  },
+
+  // ---- انرژی نورانی ----
+  {
+    section: "انرژی نورانی",
+    example: "🔹 <strong>مثال:</strong> لامپ روشن، انرژی نورانی تولید می‌کند.",
+    q: "لامپ روشن چه نوع انرژی تولید می‌کند؟",
+    options: ["صوتی", "گرمایی", "نورانی", "حرکتی"],
+    answer: 2
+  },
+  {
+    section: "انرژی نورانی",
+    example: "🔹 <strong>مثال:</strong> خورشید منبع اصلی انرژی نورانی است.",
+    q: "منبع اصلی انرژی نورانی زمین چیست؟",
+    options: ["ماه", "خورشید", "لامپ", "شمع"],
+    answer: 1
+  },
+  {
+    section: "انرژی نورانی",
+    example: "🔹 <strong>مثال:</strong> شمع روشن هم نور و هم گرما تولید می‌کند.",
+    q: "شمع روشن چه انرژی‌هایی تولید می‌کند؟",
+    options: ["فقط نورانی", "نورانی و گرمایی", "فقط صوتی", "فقط حرکتی"],
+    answer: 1
+  },
+  {
+    section: "انرژی نورانی",
+    example: "🔹 <strong>مثال:</strong> آتش هم نور و هم گرما دارد.",
+    q: "آتش چه انرژی‌هایی تولید می‌کند؟",
+    options: ["صوتی و حرکتی", "نورانی و گرمایی", "فقط نورانی", "فقط گرمایی"],
+    answer: 1
+  },
+  {
+    section: "انرژی نورانی",
+    example: "🔹 <strong>مثال:</strong> صفحه تلویزیون نور منتشر می‌کند.",
+    q: "تلویزیون روشن چه انرژی تولید می‌کند؟",
+    options: ["نورانی و صوتی", "فقط حرکتی", "فقط گرمایی", "فقط شیمیایی"],
+    answer: 0
+  },
+  {
+    section: "انرژی نورانی",
+    example: "🔹 <strong>مثال:</strong> گیاهان با نور خورشید غذاسازی می‌کنند.",
+    q: "گیاهان از کدام انرژی برای غذاسازی استفاده می‌کنند؟",
+    options: ["صوتی", "گرمایی", "نورانی", "حرکتی"],
+    answer: 2
+  },
+  {
+    section: "انرژی نورانی",
+    example: "🔹 <strong>مثال:</strong> چراغ‌قوه انرژی نورانی تولید می‌کند.",
+    q: "چراغ‌قوه چه نوع انرژی تولید می‌کند؟",
+    options: ["صوتی", "نورانی", "گرمایی", "شیمیایی"],
+    answer: 1
+  }
+];
+
+/* ================== متغیرها ================== */
+let currentIndex = 0;
+let score = 0;
+let student = { name: "", cls: "" };
+let answered = false;
+
+/* ================== شروع آزمون ================== */
+function startQuiz() {
+  const name = document.getElementById("studentName").value.trim();
+  const cls = document.getElementById("studentClass").value.trim();
+  if (!name) { alert("لطفاً نام خود را وارد کنید."); return; }
+  if (!cls) { alert("لطفاً کلاس خود را وارد کنید."); return; }
+
+  student = { name, cls };
+  currentIndex = 0;
+  score = 0;
+
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("quizScreen").classList.remove("hidden");
+  document.getElementById("studentDisplay").textContent = name + " - " + cls;
+
+  loadQuestion();
+}
+
+/* ================== بارگذاری سوال ================== */
+function loadQuestion() {
+  answered = false;
+  const q = questions[currentIndex];
+
+  document.getElementById("questionCounter").textContent =
+    `سوال ${currentIndex + 1} از ${questions.length}`;
+  document.getElementById("progressFill").style.width =
+    ((currentIndex) / questions.length * 100) + "%";
+
+  document.getElementById("exampleBox").innerHTML =
+    `<span class="section-badge">${q.section}</span><br>${q.example}`;
+  document.getElementById("questionText").textContent = q.q;
+
+  const container = document.getElementById("optionsContainer");
+  container.innerHTML = "";
+  q.options.forEach((opt, i) => {
+    const div = document.createElement("div");
+    div.className = "option";
+    div.textContent = `${["الف", "ب", "ج", "د"][i]}) ${opt}`;
+    div.onclick = () => selectOption(i, div);
+    container.appendChild(div);
+  });
+
+  document.getElementById("nextBtn").disabled = true;
+  document.getElementById("nextBtn").textContent =
+    currentIndex === questions.length - 1 ? "پایان آزمون 🏁" : "سوال بعدی ➡️";
+  document.getElementById("feedback").classList.add("hidden");
+}
+
+/* ================== انتخاب گزینه ================== */
+function selectOption(index, el) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[currentIndex];
+  const allOptions = document.querySelectorAll(".option");
+  allOptions.forEach(o => o.classList.add("disabled"));
+
+  if (index === q.answer) {
+    el.classList.add("correct");
+    score++;
+    showFeedback(true);
+  } else {
+    el.classList.add("wrong");
+    allOptions[q.answer].classList.add("correct");
+    showFeedback(false);
+  }
+
+  document.getElementById("nextBtn").disabled = false;
+}
+
+function showFeedback(isCorrect) {
+  const fb = document.getElementById("feedback");
+  fb.classList.remove("hidden");
+  if (isCorrect) {
+    fb.className = "result-box good";
+    fb.textContent = "✅ آفرین! پاسخ درست بود.";
+  } else {
+    fb.className = "result-box bad";
+    fb.textContent = "❌ پاسخ درست با رنگ سبز مشخص شد.";
+  }
+}
+
+/* ================== سوال بعدی ================== */
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex < questions.length) {
+    loadQuestion();
+  } else {
+    finishQuiz();
+  }
+}
+
+/* ================== پایان آزمون ================== */
+function finishQuiz() {
+  document.getElementById("quizScreen").classList.add("hidden");
+  document.getElementById("resultScreen").classList.remove("hidden");
+
+  document.getElementById("finalStudentName").textContent =
+    student.name + " - " + student.cls;
+  document.getElementById("finalScore").textContent = score;
+  const percent = Math.round(score / questions.length * 100);
+  document.getElementById("finalPercent").textContent =
+    `درصد موفقیت: ${percent}%`;
+
+  saveRecord(student.name, student.cls, score, questions.length);
+}
+
+/* ================== ذخیره رکورد ================== */
+function saveRecord(name, cls, sc, total) {
+  const records = JSON.parse(localStorage.getItem("quizRecords") || "[]");
+  records.push({
+    name, cls, score: sc, total,
+    date: new Date().toLocaleString("fa-IR")
+  });
+  localStorage.setItem("quizRecords", JSON.stringify(records));
+}
+
+/* ================== نمایش ادمین ================== */
+function showAdmin() {
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("resultScreen").classList.add("hidden");
+  document.getElementById("quizScreen").classList.add("hidden");
+  document.getElementById("adminScreen").classList.remove("hidden");
+
+  const records = JSON.parse(localStorage.getItem("quizRecords") || "[]");
+  const box = document.getElementById("adminList");
+
+  if (records.length === 0) {
+    box.innerHTML = "<p class='center' style='color:#888;'>هنوز کسی در آزمون شرکت نکرده است.</p>";
+    return;
+  }
+
+  let html = `<table><thead><tr>
+    <th>#</th><th>نام</th><th>کلاس</th><th>امتیاز</th><th>درصد</th><th>تاریخ</th>
+  </tr></thead><tbody>`;
+  records.forEach((r, i) => {
+    const p = Math.round(r.score / r.total * 100);
+    html += `<tr>
+      <td>${i + 1}</td>
+      <td>${r.name}</td>
+      <td>${r.cls}</td>
+      <td>${r.score} / ${r.total}</td>
+      <td>${p}%</td>
+      <td>${r.date}</td>
+    </tr>`;
+  });
+  html += "</tbody></table>";
+  box.innerHTML = html;
+}
+
+/* ================== پاک کردن رکوردها ================== */
+function clearRecords() {
+  if (confirm("آیا مطمئن هستید همه رکوردها پاک شوند؟")) {
+    localStorage.removeItem("quizRecords");
+    showAdmin();
+  }
+}
+
+/* ================== بازگشت ================== */
+function backToStart() {
+  document.getElementById("adminScreen").classList.add("hidden");
+  document.getElementById("startScreen").classList.remove("hidden");
+}
+
+/* ================== شروع مجدد ================== */
+function restart() {
+  document.getElementById("resultScreen").classList.add("hidden");
+  document.getElementById("startScreen").classList.remove("hidden");
+  document.getElementById("studentName").value = "";
+  document.getElementById("studentClass").value = "";
+}
+</script>
+</body>
+</html>
